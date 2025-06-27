@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v2.11
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=kkywalk2@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./acme.json:/letsencrypt/acme.json
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml
+    networks:
+      - web
+    restart: unless-stopped
+
+  owncloud:
+    image: owncloud/server
+    environment:
+      - OWNCLOUD_DOMAIN=cnt2020.hopto.org
+      - OWNCLOUD_ADMIN_USERNAME=kkywalk2
+      - OWNCLOUD_ADMIN_PASSWORD=pruna333
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.owncloud.rule=Host(`cnt2020.hopto.org`) && PathPrefix(`/cloud`)"
+      - "traefik.http.routers.owncloud.entrypoints=websecure"
+      - "traefik.http.routers.owncloud.tls.certresolver=myresolver"
+      - "traefik.http.middlewares.owncloud-stripprefix.stripprefix.prefixes=/cloud"
+      - "traefik.http.routers.owncloud.middlewares=owncloud-stripprefix"
+    volumes:
+      - owncloud:/mnt/data
+    networks:
+      - web
+    restart: unless-stopped
+
+networks:
+  web:
+    external: false
+
+volumes:
+  owncloud:
