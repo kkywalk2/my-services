@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 
 services:
   traefik:
@@ -6,6 +6,8 @@ services:
     command:
       - "--api.dashboard=true"
       - "--providers.docker=true"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
@@ -17,11 +19,17 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./acme.json:/letsencrypt/acme.json
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml
+      - traefik:/letsencrypt
     networks:
       - web
-    restart: unless-stopped
+    deploy:
+      labels:
+        - "traefik.enable=false"
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: any
 
   owncloud:
     image: owncloud/server
@@ -29,22 +37,30 @@ services:
       - OWNCLOUD_DOMAIN=cnt2020.hopto.org
       - OWNCLOUD_ADMIN_USERNAME=kkywalk2
       - OWNCLOUD_ADMIN_PASSWORD=pruna333
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.owncloud.rule=Host(`cnt2020.hopto.org`) && PathPrefix(`/cloud`)"
-      - "traefik.http.routers.owncloud.entrypoints=websecure"
-      - "traefik.http.routers.owncloud.tls.certresolver=myresolver"
-      - "traefik.http.middlewares.owncloud-stripprefix.stripprefix.prefixes=/cloud"
-      - "traefik.http.routers.owncloud.middlewares=owncloud-stripprefix"
+      - OWNCLOUD_OVERWRITE_WEBROOT=/cloud
     volumes:
-      - owncloud:/mnt/data
+      - /root/my-services/owncloud:/mnt/data
     networks:
       - web
-    restart: unless-stopped
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.owncloud.rule=Host(`cnt2020.hopto.org`) && PathPrefix(`/cloud`)"
+        - "traefik.http.routers.owncloud.entrypoints=websecure"
+        - "traefik.http.routers.owncloud.tls.certresolver=myresolver"
+        - "traefik.http.middlewares.owncloud-stripprefix.stripprefix.prefixes=/cloud"
+        - "traefik.http.routers.owncloud.middlewares=owncloud-stripprefix"
+        - "traefik.http.services.owncloud.loadbalancer.server.port=8080"
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 5s
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  traefik:
 
 networks:
   web:
-    external: false
-
-volumes:
-  owncloud:
+    external: true
