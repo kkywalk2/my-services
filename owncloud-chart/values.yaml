@@ -1,0 +1,27 @@
+hostPath: /root/my-services/owncloud
+
+storage:
+  size: 5Gi
+  storageClass: manual
+
+image:
+  repository: owncloud/server
+  tag: latest
+
+admin:
+  username: kkywalk2
+  password: rnjsrldud1!
+
+ingress:
+  enabled: true
+  host: cnt2020.hopto.org
+  path: /cloud
+
+ingressTls:
+  enabled: true
+  secretName: cnt2020-hopto-tls
+  clusterIssuer: letsencrypt
+
+trustedDomains:
+  - localhost
+  - cnt2020.hopto.org

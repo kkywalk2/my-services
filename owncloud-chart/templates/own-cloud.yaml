@@ -1,0 +1,110 @@
+{{- $name := .Release.Name -}}
+{{- $ns := .Release.Namespace -}}
+
+# 1) PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ $name }}-data-pv
+spec:
+  capacity:
+    storage: {{ .Values.storage.size }}
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.storage.storageClass }}
+  hostPath:
+    path: {{ .Values.hostPath }}
+    type: Directory
+---
+# 2) PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $name }}-data-pvc
+  namespace: {{ $ns }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}
+  storageClassName: {{ .Values.storage.storageClass }}
+---
+# 3) Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  namespace: {{ $ns }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $name }}
+    spec:
+      containers:
+        - name: owncloud
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: OVERWRITEWEBROOT
+              value: "{{.Values.ingress.path}}"
+            - name: HTACCESS_REWRITEBASE
+              value: "{{.Values.ingress.path}}"
+            - name: OWNCLOUD_ADMIN_USERNAME
+              value: "{{ .Values.admin.username }}"
+            - name: OWNCLOUD_ADMIN_PASSWORD
+              value: "{{ .Values.admin.password }}"
+            - name: OWNCLOUD_TRUSTED_DOMAINS
+              value: {{ .Values.trustedDomains | join "," | quote }}
+          volumeMounts:
+            - name: data
+              mountPath: /mnt/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ $name }}-data-pvc
+---
+# 4) Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  namespace: {{ $ns }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ $name }}
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $name }}
+  namespace: {{ $ns }}
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.middlewares: "{{ $ns }}-{{ $name }}-strip-prefix@kubernetescrd"
+spec:
+  rules:
+    - host: {{.Values.ingress.host}}
+      http:
+        paths:
+          - path: {{.Values.ingress.path}}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $name }}
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - {{.Values.ingress.host}}
+      secretName: {{.Values.ingressTls.secretName}}
