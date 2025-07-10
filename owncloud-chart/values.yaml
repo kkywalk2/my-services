@@ -17,11 +17,6 @@ ingress:
   host: cnt2020.hopto.org
   path: /cloud
 
-ingressTls:
-  enabled: true
-  secretName: cnt2020-hopto-tls
-  clusterIssuer: letsencrypt
-
 trustedDomains:
   - localhost
   - cnt2020.hopto.org
