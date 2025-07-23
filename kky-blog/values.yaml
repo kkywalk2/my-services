@@ -1,6 +1,6 @@
 image:
   repository: kkywalk2/kky-blog
-  tag: latest
+  tag: master
   pullPolicy: IfNotPresent
 
 service:
