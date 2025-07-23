@@ -1,0 +1,11 @@
+image:
+  repository: kkywalk2/kky-blog
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  port: 9001
+
+ingress:
+  host: cnt2020.hopto.org
+  pathPrefix: /blog
