@@ -10,7 +10,7 @@ image:
 
 admin:
   username: kkywalk2
-  password: rnjsrldud1!
+  password: 1234
 
 ingress:
   enabled: true
