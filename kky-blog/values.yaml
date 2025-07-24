@@ -2,6 +2,8 @@ image:
   repository: kkywalk2/kky-blog
   tag: master
   pullPolicy: IfNotPresent
+  args:
+    - "--USE_PROFILE=prod"
 
 service:
   port: 9001
