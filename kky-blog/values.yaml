@@ -8,11 +8,30 @@ image:
 env:
   DB_USERNAME: root
   DB_PASSWORD: "1234"
-  DB_URL: jdbc:mysql://localhost:3306/testdb
+  DB_URL: jdbc:mysql://kky-blog-mysql-service:3306/testdb
   DB_SHOW_SQL: "false"
   JWT_SECRET: MYSECRETKEYASDSADASDASDASDASDASDSADSADSA
   SERVER_PORT: "9001"
   IMAGE_PATH: /app/images
+
+mysql:
+  image:
+    repository: mysql
+    tag: "8.0"
+    pullPolicy: IfNotPresent
+  rootPassword: "1234"
+  database: testdb
+  username: root
+  password: "1234"
+  storage:
+    size: 10Gi
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
 
 service:
   port: 9001
