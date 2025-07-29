@@ -37,7 +37,7 @@ spec:
               value: "{{ .Values.env.SERVER_PORT }}"
             - name: IMAGE_PATH
               value: "{{ .Values.env.IMAGE_PATH }}"
-
+---
 apiVersion: v1
 kind: Service
 metadata:
