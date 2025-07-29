@@ -38,4 +38,4 @@ service:
 
 ingress:
   host: cnt2020.hopto.org
-  pathPrefix: /blog
+  pathPrefix: /
