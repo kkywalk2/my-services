@@ -49,7 +49,7 @@ spec:
     app: {{ $name }}
   ports:
     - port: 80
-      targetPort: "{{ .Values.env.SERVER_PORT }}"
+      targetPort: {{ .Values.env.SERVER_PORT }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
