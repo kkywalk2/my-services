@@ -5,6 +5,15 @@ image:
   args:
     - "--USE_PROFILE=prod"
 
+env:
+  DB_USERNAME: root
+  DB_PASSWORD: "1234"
+  DB_URL: jdbc:mysql://localhost:3306/testdb
+  DB_SHOW_SQL: "false"
+  JWT_SECRET: MYSECRETKEYASDSADASDASDASDASDASDSADSADSA
+  SERVER_PORT: "9001"
+  IMAGE_PATH: /app/images
+
 service:
   port: 9001
 
