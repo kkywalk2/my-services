@@ -21,7 +21,7 @@ mysql:
     pullPolicy: IfNotPresent
   rootPassword: "1234"
   database: testdb
-  username: root
+  username: testUser
   password: "1234"
   storage:
     size: 10Gi
