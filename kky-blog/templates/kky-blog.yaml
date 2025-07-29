@@ -60,7 +60,6 @@ metadata:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls.certresolver: default
-    traefik.ingress.kubernetes.io/router.middlewares: "{{ $ns }}-{{ $name }}-strip-prefix@kubernetescrd"
 spec:
   rules:
     - host: {{.Values.ingress.host}}
