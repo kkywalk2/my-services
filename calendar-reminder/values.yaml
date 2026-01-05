@@ -1,0 +1,71 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/kkywalk2/calendar-reminder
+  tag: main
+  pullPolicy: Always
+
+imagePullSecrets: []
+
+# Web server configuration
+web:
+  port: 3000
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Worker configuration
+worker:
+  enabled: true
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Environment variables
+env:
+  BASE_URL: "https://cnt2020.hopto.org/calendar-reminder"
+  REMINDER_MINUTES: "10"
+
+# Secrets (base64 encoded in secret.yaml)
+secrets:
+  sessionSecret: ""
+  googleClientId: ""
+  googleClientSecret: ""
+
+# Persistence for SQLite
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 1Gi
+  accessMode: ReadWriteOnce
+
+# Ingress configuration (Traefik IngressRoute)
+ingress:
+  enabled: true
+  host: cnt2020.hopto.org
+  pathPrefix: /calendar-reminder
+
+# Service account
+serviceAccount:
+  create: false
+  name: ""
+
+# Pod annotations
+podAnnotations: {}
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: calendar-reminder
+description: Google Calendar Reminder with Discord Webhook
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

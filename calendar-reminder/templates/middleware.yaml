@@ -1,0 +1,12 @@
+{{- if and .Values.ingress.enabled .Values.ingress.pathPrefix }}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "calendar-reminder.fullname" . }}-stripprefix
+  labels:
+    {{- include "calendar-reminder.labels" . | nindent 4 }}
+spec:
+  stripPrefix:
+    prefixes:
+      - {{ .Values.ingress.pathPrefix }}
+{{- end }}

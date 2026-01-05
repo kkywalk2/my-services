@@ -1,0 +1,21 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "calendar-reminder.fullname" . }}
+  labels:
+    {{- include "calendar-reminder.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ .Values.ingress.host }}`){{ if .Values.ingress.pathPrefix }} && PathPrefix(`{{ .Values.ingress.pathPrefix }}`){{ end }}
+      kind: Rule
+      {{- if .Values.ingress.pathPrefix }}
+      middlewares:
+        - name: {{ include "calendar-reminder.fullname" . }}-stripprefix
+      {{- end }}
+      services:
+        - name: {{ include "calendar-reminder.fullname" . }}
+          port: {{ .Values.web.port }}
+{{- end }}
