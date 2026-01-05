@@ -7,7 +7,9 @@ metadata:
     {{- include "calendar-reminder.labels" . | nindent 4 }}
 spec:
   entryPoints:
-    - web
+    - websecure
+  tls:
+    certResolver: default
   routes:
     - match: Host(`{{ .Values.ingress.host }}`){{ if .Values.ingress.pathPrefix }} && PathPrefix(`{{ .Values.ingress.pathPrefix }}`){{ end }}
       kind: Rule
