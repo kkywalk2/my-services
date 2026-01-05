@@ -31,7 +31,8 @@ worker:
 
 # Environment variables
 env:
-  BASE_URL: "https://cnt2020.hopto.org/calendar-reminder"
+  BASE_URL: "https://cnt2020.hopto.org"
+  BASE_PATH": "/calendar-reminder"
   REMINDER_MINUTES: "10"
 
 # Secrets (base64 encoded in secret.yaml)

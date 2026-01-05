@@ -39,6 +39,8 @@ spec:
               value: "production"
             - name: BASE_URL
               value: "{{ .Values.env.BASE_URL }}"
+            - name: BASE_PATH
+              value: "{{ .Values.env.BASE_PATH }}"
             - name: DATABASE_PATH
               value: "/app/data/calendar-reminder.db"
             - name: SESSION_SECRET
