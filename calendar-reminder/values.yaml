@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/kkywalk2/calendar-reminder
-  tag: main
+  tag: 89b5626
   pullPolicy: Always
 
 imagePullSecrets: []
