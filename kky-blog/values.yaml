@@ -1,6 +1,6 @@
 image:
   repository: kkywalk2/kky-blog
-  tag: master
+  tag: master-3a60c88
   pullPolicy: IfNotPresent
   args:
     - "--USE_PROFILE=prod"
