@@ -1,0 +1,19 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "simple-webdav.fullname" . }}
+  labels:
+    {{- include "simple-webdav.labels" . | nindent 4 }}
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    certResolver: default
+  routes:
+    - match: Host(`{{ .Values.ingress.host }}`) && PathPrefix(`{{ .Values.ingress.pathPrefix }}`)
+      kind: Rule
+      services:
+        - name: {{ include "simple-webdav.fullname" . }}
+          port: {{ .Values.service.port }}
+{{- end }}
